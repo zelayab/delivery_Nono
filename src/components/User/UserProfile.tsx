@@ -31,7 +31,7 @@ const UserProfile = () => {
       const userId = sanitizeFirebaseKey(rawUserId);
 
       try {
-        const userRef = ref(db, users/${userId});
+        const userRef = ref(db, `users/${userId}`);
         const snapshot = await get(userRef);
 
         if (snapshot.exists()) {
@@ -75,7 +75,7 @@ const UserProfile = () => {
         updateData.phone = phone;
       }
 
-      await update(ref(db, users/${userId}), updateData);
+      await update(ref(db, `users/${userId}`), updateData);
 
       showNotification({
         title: "Éxito",

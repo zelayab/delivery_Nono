@@ -77,7 +77,7 @@ const AdminCoupons = () => {
     }
 
     try {
-      const newCouponRef = ref(db, coupons/${code});
+      const newCouponRef = ref(db, `coupons/${code}`);
       await update(newCouponRef, {
         code,
         discount,
@@ -95,7 +95,7 @@ const AdminCoupons = () => {
 
   const handleDeleteCoupon = async (id: string) => {
     try {
-      const couponRef = ref(db, coupons/${id});
+      const couponRef = ref(db, `coupons/${id}`);
       await remove(couponRef);
     } catch (error) {
       console.error("Error deleting coupon:", error);
