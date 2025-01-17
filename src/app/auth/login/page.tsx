@@ -1,12 +1,12 @@
 "use client";
 
+import { auth, db } from "@/firebase/firebaseConfig";
 import { Button, TextInput } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { get, ref, set } from "firebase/database";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { auth, db } from '../../../firebase/firebaseConfig';
 
 type UserData = {
   email: string;

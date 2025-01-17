@@ -81,11 +81,11 @@ const OrderList: React.FC<OrderListProps> = ({ isAdmin }) => {
 
   const changeOrderStatus = async (orderId: string, newStatus: string) => {
     try {
-      const orderRef = ref(db, orders/${orderId});
+      const orderRef = ref(db, `orders/${orderId}`);
       await update(orderRef, { status: newStatus });
       showNotification({
         title: "Estado actualizado",
-        message: El pedido ahora está "${newStatus}".,
+        message: `El pedido ahora está "${newStatus}".`,
         color: "green",
         icon: <IconCheck size={16} />,
       });
@@ -102,7 +102,7 @@ const OrderList: React.FC<OrderListProps> = ({ isAdmin }) => {
 
   const assignDelivery = async (orderId: string, deliveryId: string) => {
     try {
-      const orderRef = ref(db, orders/${orderId});
+      const orderRef = ref(db, `orders/${orderId}`);
       await update(orderRef, { deliveryId, status: "en camino" });
       showNotification({
         title: "Repartidor asignado",

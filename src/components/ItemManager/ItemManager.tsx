@@ -29,7 +29,7 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
   };
 
   const handleDelete = (id: string) => {
-    const refPath = type === "menu" ? menu/${id} : promotions/${id};
+    const refPath = type === "menu" ? `menu/${id}` : `promotions/${id}`;
     remove(ref(db, refPath)).then(() => 
       showNotification({
         title: "Producto/Promoción eliminado",
@@ -38,11 +38,11 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
   };
 
   const handleToggleAvailability = (id: string, available: boolean) => {
-    const refPath = type === "menu" ? menu/${id} : promotions/${id};
+    const refPath = type === "menu" ? `menu/${id}` : `promotions/${id}`;
     update(ref(db, refPath), { available: !available }).then(() =>
         showNotification({
           title: "Producto/Promoción actualizado",
-          message: Producto/Promoción ${available ? "desactivado" : "activado"} con éxito.,
+          message: `Producto/Promoción ${available ? "desactivado" : "activado"} con éxito.`,
         }),
     );
   };
@@ -50,11 +50,11 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
   const handleSubmit = () => {
     const refPath = editingItem
       ? type === "menu"
-        ? menu/${editingItem.id}
-        : promotions/${editingItem.id}
+        ? `menu/${editingItem.id}`
+        : `promotions/${editingItem.id}`
       : type === "menu"
-      ? menu/new_${Date.now()}
-      : promotions/new_${Date.now()};
+      ? `menu/new_${Date.now()}`
+      : `promotions/new_${Date.now()}`;
 
     if (editingItem) {
       update(ref(db, refPath), formData).then(() => {
