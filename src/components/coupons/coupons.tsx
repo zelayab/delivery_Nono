@@ -51,12 +51,14 @@ const AdminCoupons = () => {
     const unsubscribe = onValue(couponsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const formattedCoupons = Object.entries(data).map(([id, coupon]) => {
-          if (typeof coupon === "object" && coupon !== null) {
-            return { ...(coupon as Coupon) };
-          }
-          return null;
-        }).filter(Boolean) as Coupon[];
+        const formattedCoupons = Object.entries(data)
+          .map(([id, coupon]) => {
+            if (typeof coupon === "object" && coupon !== null) {
+              return { ...(coupon as Coupon) };
+            }
+            return null;
+          })
+          .filter(Boolean) as Coupon[];
         setCoupons(formattedCoupons);
       }
     });
@@ -111,23 +113,27 @@ const AdminCoupons = () => {
       </Button>
 
       <Table mt="lg">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Descuento</th>
-            <th>Descripción</th>
-            <th>Expira</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Código</Table.Th>
+            <Table.Th>Descuento</Table.Th>
+            <Table.Th>Descripción</Table.Th>
+            <Table.Th>Expira</Table.Th>
+            <Table.Th>Acciones</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
           {coupons.map((coupon) => (
-            <tr key={coupon.id}>
-              <td>{coupon.code}</td>
-              <td>{coupon.discount}%</td>
-              <td>{coupon.description}</td>
-              <td>{new Date(coupon.expiresAt).toLocaleDateString()}</td>
-              <td>
+            <Table.Tr key={coupon.id}>
+              {" "}
+              {/* Use `id` from Firebase */}
+              <Table.Td>{coupon.code}</Table.Td>
+              <Table.Td>{coupon.discount}%</Table.Td>
+              <Table.Td>{coupon.description}</Table.Td>
+              <Table.Td>
+                {new Date(coupon.expiresAt).toLocaleDateString()}
+              </Table.Td>
+              <Table.Td>
                 <Group>
                   <ActionIcon
                     color="red"
@@ -136,10 +142,10 @@ const AdminCoupons = () => {
                     <IconTrash />
                   </ActionIcon>
                 </Group>
-              </td>
-            </tr>
+              </Table.Td>
+            </Table.Tr>
           ))}
-        </tbody>
+        </Table.Tbody>
       </Table>
 
       <Modal
@@ -162,7 +168,10 @@ const AdminCoupons = () => {
             placeholder="Ej: 50"
             value={newCoupon.discount || 0}
             onChange={(value) =>
-              setNewCoupon((prev) => ({ ...prev, discount: Number(value) || 0 }))
+              setNewCoupon((prev) => ({
+                ...prev,
+                discount: Number(value) || 0,
+              }))
             }
             min={0}
           />
