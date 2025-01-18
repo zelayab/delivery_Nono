@@ -1,13 +1,28 @@
 "use client";
 
 import { db } from "@/firebase/firebaseConfig";
-import { Button, Modal, Select, Stack, Switch, Text, TextInput } from "@mantine/core";
+import {
+  Button,
+  Image,
+  Modal,
+  Select,
+  Stack,
+  Switch,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconEdit, IconSearch, IconTrash } from "@tabler/icons-react";
 import { ref, remove, set, update } from "firebase/database";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions" }) => {
+const ItemManager = ({
+  items,
+  type,
+}: {
+  items: any[];
+  type: "menu" | "promotions";
+}) => {
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<any>({
@@ -30,31 +45,40 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
 
   const handleDelete = (id: string) => {
     const refPath = type === "menu" ? `menu/${id}` : `promotions/${id}`;
-    remove(ref(db, refPath)).then(() => 
+    remove(ref(db, refPath)).then(() =>
       showNotification({
         title: "Producto/Promoción eliminado",
         message: "Producto/Promoción eliminado con éxito.",
-      }));
+      })
+    );
   };
 
   const handleToggleAvailability = (id: string, available: boolean) => {
     const refPath = type === "menu" ? `menu/${id}` : `promotions/${id}`;
     update(ref(db, refPath), { available: !available }).then(() =>
-        showNotification({
-          title: "Producto/Promoción actualizado",
-          message: `Producto/Promoción ${available ? "desactivado" : "activado"} con éxito.`,
-        }),
+      showNotification({
+        title: "Producto/Promoción actualizado",
+        message: `Producto/Promoción ${
+          available ? "desactivado" : "activado"
+        } con éxito.`,
+      })
     );
   };
 
   const handleSubmit = () => {
+    let timestamp = null;
+
+    useEffect(() => {
+      timestamp = Date.now(); // Se asegura que el timestamp se genere en el cliente
+    }, []);
+
     const refPath = editingItem
       ? type === "menu"
         ? `menu/${editingItem.id}`
         : `promotions/${editingItem.id}`
       : type === "menu"
-      ? `menu/new_${Date.now()}`
-      : `promotions/new_${Date.now()}`;
+      ? `menu/new_${timestamp}`
+      : `promotions/new_${timestamp}`;
 
     if (editingItem) {
       update(ref(db, refPath), formData).then(() => {
@@ -78,8 +102,12 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
 
   // Filtro de búsqueda y categoría
   const filteredItems = items.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter ? item.category === categoryFilter : true;
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter
+      ? item.category === categoryFilter
+      : true;
     return matchesSearch && matchesCategory;
   });
 
@@ -125,22 +153,49 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
       ) : (
         <ul>
           {filteredItems.map((item) => (
-            <li key={item.id} className="mb-4 p-4 bg-white shadow rounded flex justify-between items-center">
-              <div>
-                <Text>{item.name}</Text>
-                <Text>Precio: ${item.price}</Text>
-                <Text>Estado: {item.available ? "Disponible" : "No disponible"}</Text>
+            <li
+              key={item.id}
+              className="mb-4 p-4 bg-white shadow rounded flex justify-between items-center"
+            >
+              <div className=" flex gap-4 w-full
+              ">
+                <div>
+                  <Text>{item.name}</Text>
+                  <Text>Categoría: {item.category}</Text>
+                  <Text>Descripción: {item.description}</Text>
+                  <Text>Precio: ${item.price}</Text>
+                  <Text>
+                    Estado: {item.available ? "Disponible" : "No disponible"}
+                  </Text>
+                </div>
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  className="w-20 h-30 object-cover rounded"
+                />
               </div>
               <div className="flex items-center gap-2">
                 <Switch
                   checked={item.available}
-                  onChange={() => handleToggleAvailability(item.id, item.available)}
+                  onChange={() =>
+                    handleToggleAvailability(item.id, item.available)
+                  }
                   label={item.available ? "Activo" : "Inactivo"}
                 />
-                <Button onClick={() => handleEdit(item)} size="xs" color="blue" leftSection={<IconEdit size={14} />}>
+                <Button
+                  onClick={() => handleEdit(item)}
+                  size="xs"
+                  color="blue"
+                  leftSection={<IconEdit size={14} />}
+                >
                   Editar
                 </Button>
-                <Button onClick={() => handleDelete(item.id)} size="xs" color="red" leftSection={<IconTrash size={14} />}>
+                <Button
+                  onClick={() => handleDelete(item.id)}
+                  size="xs"
+                  color="red"
+                  leftSection={<IconTrash size={14} />}
+                >
                   Eliminar
                 </Button>
               </div>
@@ -150,7 +205,11 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
       )}
 
       {/* Modal para Crear/Editar */}
-      <Modal opened={isModalOpen} onClose={() => setIsModalOpen(false)} title="Gestión de Producto/Promoción">
+      <Modal
+        opened={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Gestión de Producto/Promoción"
+      >
         <Stack>
           <TextInput
             label="Nombre"
@@ -163,13 +222,17 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
             placeholder="Precio"
             type="number"
             value={formData.price}
-            onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+            onChange={(e) =>
+              setFormData({ ...formData, price: Number(e.target.value) })
+            }
           />
           <TextInput
             label="Imagen"
             placeholder="URL de la imagen"
             value={formData.image}
-            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, image: e.target.value })
+            }
           />
           {type === "menu" && (
             <Select
@@ -181,7 +244,9 @@ const ItemManager = ({ items, type }: { items: any[]; type: "menu" | "promotions
               label="Categoría"
               placeholder="Selecciona una categoría"
               value={formData.category}
-              onChange={(value) => setFormData({ ...formData, category: value })}
+              onChange={(value) =>
+                setFormData({ ...formData, category: value })
+              }
               data={[
                 { value: "Plato Principal", label: "Plato Principal" },
                 { value: "Entrada", label: "Entrada" },

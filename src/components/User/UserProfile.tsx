@@ -28,12 +28,13 @@ const UserProfile = () => {
         return;
       }
 
+      //sanitize es una función que reemplaza los caracteres especiales por guiones bajos
       const userId = sanitizeFirebaseKey(rawUserId);
 
       try {
         const userRef = ref(db, `users/${userId}`);
         const snapshot = await get(userRef);
-
+        
         if (snapshot.exists()) {
           const data = snapshot.val();
           setName(data.name || "");

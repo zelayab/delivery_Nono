@@ -2,16 +2,16 @@
 
 import { db } from "@/firebase/firebaseConfig";
 import {
-    Badge,
-    Button,
-    Card,
-    Grid,
-    Image,
-    Modal,
-    NumberInput,
-    Stack,
-    Text,
-    TextInput,
+  Badge,
+  Button,
+  Card,
+  Grid,
+  Image,
+  Modal,
+  NumberInput,
+  Stack,
+  Text,
+  TextInput,
 } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconCheck, IconPlus, IconTrash, IconX } from "@tabler/icons-react";
@@ -176,92 +176,110 @@ const MenuList: React.FC<MenuListProps> = ({
 
       {/* Lista de productos */}
       <Grid gutter="lg" p={"1rem"}>
-        {menu.map((item) => (
-          console.log(item),
-          <Grid.Col span={4} key={item.id}>
-            <Card
-              shadow="sm"
-              padding="lg"
-              radius="md"
-              withBorder
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-            >
-              <Card.Section
-                style={{
-                  // Para posicionar el badge dentro del contenedor de la imagen
-                  position: "relative",
-                }}
-              >
-                <Image
-                  src={item.image}
-                  alt={item.name}
+        {menu.map(
+          (item) => (
+            console.log(item),
+            (
+              <Grid.Col span={4} key={item.id}>
+                <Card
+                  shadow="sm"
+                  padding="lg"
+                  radius="md"
+                  withBorder
                   style={{
-                    height: "150px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
-                <Badge
-                  color="blue"
-                  style={{
-                    position: "absolute",
-                    top: "8px", // Separación desde la parte superior
-                    right: "8px", // Separación desde el lado derecho
-                    zIndex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
-                  {item.category}
-                </Badge>
-              </Card.Section>
-
-              <div style={{ marginTop: "1rem", textAlign: "center" }}>
-                <Text fw={500} style={{ fontSize: "1.2rem" }}>
-                  {item.name}
-                </Text>
-              </div>
-
-              <Text size="sm" color="dimmed" style={{ marginTop: "1rem" }}>
-                Precio: ${item.price}
-              </Text>
-
-              {showAddButton && (
-                <Stack mt="md" align="center">
-                  <NumberInput
-                    defaultValue={1}
-                    min={1}
-                    id={`quantity-${item.id}`}
-                    style={{ width: "70px" }}
-                  />
-                  <Button
-                    size="sm"
-                    leftSection={<IconPlus size={16} />}
-                    onClick={() => {
-                      const quantity = Number(
-                        (
-                          document.getElementById(
-                            `quantity-${item.id}`
-                          ) as HTMLInputElement
-                        )?.value || 1
-                      );
-                      onSelect && onSelect(item, quantity);
-                    }}
+                  <Card.Section
                     style={{
-                      marginTop: "1rem",
-                      backgroundColor: "#007bff",
-                      color: "white",
+                      // Para posicionar el badge dentro del contenedor de la imagen
+                      position: "relative",
                     }}
                   >
-                    Agregar
-                  </Button>
-                </Stack>
-              )}
-            </Card>
-          </Grid.Col>
-        ))}
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      style={{
+                        height: "150px",
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                        filter: item.available ? "" : "grayscale(1)",
+                      }}
+                    />
+                    <Badge
+                      color={item.available ? "green" : "red"}
+                      style={{
+                        position: "absolute",
+                        top: "8px", // Separación desde la parte superior
+                        left: "8px", // Separación desde el lado derecho
+                        zIndex: 1,
+                      }}
+                    >
+                      {item.available ? "Disponible" : "No disponible"}
+                    </Badge>
+                    <Badge
+                      color="blue"
+                      style={{
+                        position: "absolute",
+                        top: "8px", // Separación desde la parte superior
+                        right: "8px", // Separación desde el lado derecho
+                        zIndex: 1,
+                      }}
+                    >
+                      {item.category}
+                    </Badge>
+                  </Card.Section>
+
+                  <div style={{ marginTop: "1rem", textAlign: "center" }}>
+                    <Text fw={500} style={{ fontSize: "1.2rem" }}>
+                      {item.name}
+                    </Text>
+                  </div>
+
+                  <Text size="sm" color="dimmed" style={{ marginTop: "1rem" }}>
+                    Precio: ${item.price}
+                  </Text>
+
+                  {showAddButton && (
+                    <Stack mt="md" align="center">
+                      <NumberInput
+                        defaultValue={1}
+                        min={1}
+                        id={`quantity-${item.id}`}
+                        style={{ width: "70px" }}
+                        disabled={!item.available}
+                      />
+                      <Button
+                        size="sm"
+                        leftSection={<IconPlus size={16} />}
+                        onClick={() => {
+                          const quantity = Number(
+                            (
+                              document.getElementById(
+                                `quantity-${item.id}`
+                              ) as HTMLInputElement
+                            )?.value || 1
+                          );
+                          onSelect && onSelect(item, quantity);
+                        }}
+                        style={{
+                          marginTop: "1rem",
+                          backgroundColor: "#007bff",
+                          color: "white",
+                        }}
+                        disabled={!item.available}
+                      >
+                        Agregar
+                      </Button>
+                    </Stack>
+                  )}
+                </Card>
+              </Grid.Col>
+            )
+          )
+        )}
       </Grid>
     </>
   );
