@@ -2,17 +2,17 @@
 
 import { db } from "@/firebase/firebaseConfig";
 import {
-    ActionIcon,
-    Button,
-    Drawer,
-    Group,
-    Image,
-    NumberInput,
-    SegmentedControl,
-    Stack,
-    Text,
-    TextInput,
-    Title,
+  ActionIcon,
+  Button,
+  Drawer,
+  Group,
+  Image,
+  NumberInput,
+  SegmentedControl,
+  Stack,
+  Text,
+  TextInput,
+  Title,
 } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconCheck, IconMinus, IconPlus, IconTrash, IconX } from "@tabler/icons-react";
@@ -135,9 +135,13 @@ const Cart: React.FC<CartProps> = ({
       });
       return;
     }
-
-    const currentTimestamp = Date.now();
-
+  
+    // Aseguramos que el timestamp solo se genere en el cliente
+    let currentTimestamp: number | null = null;
+    useEffect(() => {
+      currentTimestamp = Date.now(); // Timestamp generado solo en el cliente
+    }, []);
+  
     const newOrder: NewOrder = {
       userId,
       items: cart.map((item) => ({
@@ -149,7 +153,7 @@ const Cart: React.FC<CartProps> = ({
       })),
       status: "pendiente",
       deliveryId: null,
-      timestamp: currentTimestamp,
+      timestamp: currentTimestamp || 0, // Valor seguro si no se inicializa
       comments: comments,
       address: "Domicilio registrado o personalizado",
       total: finalTotal,
@@ -157,18 +161,18 @@ const Cart: React.FC<CartProps> = ({
       change: paymentMethod === "efectivo" ? 0 : null,
       discount: discount,
     };
-
+  
     try {
       const ordersRef = ref(db, `orders`);
-      const orderRef = await push(ordersRef, newOrder); // Almacenar en un nodo global de órdenes
-
+      const orderRef = await push(ordersRef, newOrder);
+  
       showNotification({
         title: "Pedido Confirmado",
         message: "Tu pedido ha sido registrado exitosamente.",
         color: "green",
         icon: <IconCheck size={16} />,
       });
-
+  
       localStorage.setItem("orderId", orderRef.key!);
       router.push(`/confirm-order?orderId=${orderRef.key}`);
     } catch (error) {
@@ -181,6 +185,7 @@ const Cart: React.FC<CartProps> = ({
       });
     }
   };
+  
 
   const postComments = (comments: string) => {
     if (comments.length > 100) {
