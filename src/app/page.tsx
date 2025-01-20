@@ -16,7 +16,7 @@ export default function Home() {
         const userRole = localStorage.getItem("userRole");
         if (userRole) {
           setIsAuthenticated(true);
-          router.push(`/dashboard/${userRole}`);
+          router.push(`/dashboard`);
         } else {
           setIsAuthenticated(false);
         }

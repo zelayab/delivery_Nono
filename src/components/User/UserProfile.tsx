@@ -83,7 +83,7 @@ const UserProfile = () => {
         message: "Perfil actualizado correctamente.",
         color: "blue",
       });
-      router.push("/dashboard/client");
+      router.push("/dashboard");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error al guardar el perfil.");
     }

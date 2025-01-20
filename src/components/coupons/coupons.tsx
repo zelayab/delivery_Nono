@@ -123,21 +123,19 @@ const AdminCoupons = () => {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {coupons.map((coupon) => (
-            <Table.Tr key={coupon.id}>
-              {" "}
-              {/* Use `id` from Firebase */}
-              <Table.Td>{coupon.code}</Table.Td>
-              <Table.Td>{coupon.discount}%</Table.Td>
-              <Table.Td>{coupon.description}</Table.Td>
+          {coupons.map((item: any) => (
+            <Table.Tr key={item.id}>
+              <Table.Td>{item.code}</Table.Td>
+              <Table.Td>{item.discount}%</Table.Td>
+              <Table.Td>{item.description}</Table.Td>
               <Table.Td>
-                {new Date(coupon.expiresAt).toLocaleDateString()}
+                {new Date(item.expiresAt).toLocaleDateString()}
               </Table.Td>
               <Table.Td>
                 <Group>
                   <ActionIcon
                     color="red"
-                    onClick={() => handleDeleteCoupon(coupon.id)}
+                    onClick={() => handleDeleteCoupon(item.id)}
                   >
                     <IconTrash />
                   </ActionIcon>
