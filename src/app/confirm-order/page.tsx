@@ -27,7 +27,7 @@ const ConfirmOrder = () => {
 
       try {
         console.log("Fetching order with ID:", orderId); // Debugging
-        const orderRef = ref(db, orders/${orderId});
+        const orderRef = ref(db, `orders/${orderId}`);
         const snapshot = await get(orderRef);
         if (snapshot.exists()) {
           console.log("Order data:", snapshot.val()); // Debugging
@@ -105,7 +105,7 @@ const ConfirmOrder = () => {
           onClick={() => router.push("/dashboard")}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Volver al Dashboard
+          Volver al Panel
         </button>
       </div>
     </div>

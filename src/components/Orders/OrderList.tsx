@@ -34,6 +34,11 @@ interface OrderListProps {
   isAdmin?: boolean;
 }
 
+interface OrderStatusValidation {
+  /* las palabras son entregado,cancelado */
+
+}
+
 const OrderList: React.FC<OrderListProps> = ({ isAdmin }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [deliveryPersons, setDeliveryPersons] = useState<any[]>([]);
@@ -157,6 +162,8 @@ const OrderList: React.FC<OrderListProps> = ({ isAdmin }) => {
                     ? "blue"
                     : order.status === "entregado"
                     ? "green"
+                    : order.status === 'en preparacion'
+                    ? "purple"
                     : "red"
                 }
               >
@@ -212,7 +219,7 @@ const OrderList: React.FC<OrderListProps> = ({ isAdmin }) => {
               </Text>
 
 
-              {isAdmin && (
+              {isAdmin && !["entregado", "rechazado", "cancelado"].includes(order.status)  && (
                 <Stack>
                   <Select
                   styles={{
@@ -223,6 +230,7 @@ const OrderList: React.FC<OrderListProps> = ({ isAdmin }) => {
                     label="Cambiar Estado"
                     placeholder="Seleccionar estado"
                     data={[
+                      { value: "en preparacion", label: "En preparación" },
                       { value: "pendiente", label: "Pendiente" },
                       { value: "en camino", label: "En Camino" },
                       { value: "entregado", label: "Entregado" },

@@ -124,6 +124,12 @@ const Cart: React.FC<CartProps> = ({
     );
   };
 
+    // Aseguramos que el timestamp solo se genere en el cliente
+  let currentTimestamp: number | null = null;
+    useEffect(() => {
+      currentTimestamp = Date.now(); // Timestamp generado solo en el cliente
+    }, []);
+
   const handleConfirmOrder = async () => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
@@ -136,11 +142,7 @@ const Cart: React.FC<CartProps> = ({
       return;
     }
   
-    // Aseguramos que el timestamp solo se genere en el cliente
-    let currentTimestamp: number | null = null;
-    useEffect(() => {
-      currentTimestamp = Date.now(); // Timestamp generado solo en el cliente
-    }, []);
+    
   
     const newOrder: NewOrder = {
       userId,

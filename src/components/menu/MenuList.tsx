@@ -242,7 +242,7 @@ const MenuList: React.FC<MenuListProps> = ({
                     Precio: ${item.price}
                   </Text>
 
-                  {showAddButton && (
+                  {showAddButton && item.available && (
                     <Stack mt="md" align="center">
                       <NumberInput
                         defaultValue={1}
@@ -264,15 +264,24 @@ const MenuList: React.FC<MenuListProps> = ({
                           );
                           onSelect && onSelect(item, quantity);
                         }}
-                        style={{
-                          marginTop: "1rem",
-                          backgroundColor: "#007bff",
-                          color: "white",
-                        }}
+                        style={ item.available ? 
+                          {
+                            marginTop: "1rem",
+                            backgroundColor: "#007bff",
+                            color: "white",
+                          }
+                          :{
+                            marginTop: "1rem",
+                            backgroundColor: "gray",
+                            color: "white",
+                            cursor: "not-allowed",
+                          }
+                        }
                         disabled={!item.available}
                       >
                         Agregar
                       </Button>
+                      
                     </Stack>
                   )}
                 </Card>

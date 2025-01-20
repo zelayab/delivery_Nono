@@ -147,6 +147,7 @@ const DeliveryDashboard = () => {
                       }}
                       placeholder="Actualizar estado"
                       data={[
+                        { value: "en preparacion", label: "En preparación" },
                         { value: "pendiente", label: "Pendiente" },
                         { value: "en camino", label: "En Camino" },
                         { value: "entregado", label: "Entregado" },

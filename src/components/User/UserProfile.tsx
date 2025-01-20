@@ -104,7 +104,7 @@ const UserProfile = () => {
           {error}
         </Text>
         <Button onClick={() => router.push("/dashboard/client")} fullWidth color="gray">
-          Volver al Dashboard
+          Volver al Panel
         </Button>
       </div>
     );
