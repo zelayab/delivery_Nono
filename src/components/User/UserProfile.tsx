@@ -142,12 +142,6 @@ const UserProfile = () => {
           value={email}
           disabled
         />
-        <TextInput
-          label="Rol"
-          placeholder="Tu rol"
-          value={role}
-          disabled
-        />
       </Stack>
       <br />
       <Stack>
