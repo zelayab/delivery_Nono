@@ -1,7 +1,8 @@
 "use client";
 
 import AppLayout from "@/components/Navbar/Navbar";
-import { Container, Loader, Text } from "@mantine/core";
+import { Loader, Text } from "@mantine/core";
+import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AdminDashboard from "./admin/page";
@@ -27,12 +28,41 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Container>
-        <Loader size="lg" variant="dots" mt="xl" />
-        <Text size="lg" mt="sm" >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          textAlign: "center",
+          width: "100%",
+          backgroundColor: "#228be6",
+        }}
+      >
+        <motion.div
+          className="w-48 h-48 bg-white rounded-full shadow-lg flex items-center justify-center mb-6"
+          animate={{
+            scale: [1, 1.2, 1], // Escala
+            rotate: [0, 10, -10, 0], // Rotación
+          }}
+          transition={{
+            duration: 2, // Duración
+            repeat: Infinity, // Repetir indefinidamente
+            ease: "easeInOut", // Suavizado
+          }}
+        >
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/019/796/973/non_2x/motorbike-delivery-man-logo-icon-symbol-template-free-vector.jpg"
+            alt="Delivery Nono"
+            className="w-36 h-36 object-cover rounded-full"
+          />
+        </motion.div>
+        <Loader size="4xl" variant="dots" color="blue" />
+        <Text size="xl" mt="md">
           Cargando...
         </Text>
-      </Container>
+      </div>
     );
   }
 
@@ -40,7 +70,7 @@ const Dashboard = () => {
     if (role === "admin") return <AdminDashboard />;
     if (role === "client") return <ClientDashboard />;
     if (role === "delivery") return <DeliveryDashboard />;
-    return <Text >Rol desconocido. Por favor, contáctanos.</Text>;
+    return <Text>Rol desconocido. Por favor, contáctanos.</Text>;
   };
 
   return <AppLayout>{renderDashboard()}</AppLayout>;
