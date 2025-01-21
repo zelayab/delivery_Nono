@@ -32,7 +32,7 @@ const ClientDashboard = () => {
   const [currentOrder, setCurrentOrder] = useState<any>(null);
   const [orderHistory, setOrderHistory] = useState<any[]>([]);
   const [deliveryMap, setDeliveryMap] = useState<Record<string, string>>({}); // UID-to-Name map
-  const [loading, setLoading] = useState<boolean>(true);
+  const [_loading, setLoading] = useState<boolean>(true);
   const [cart, setCart] = useState<any[]>([]);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [comments, setComments] = useState<string>(""); // Estado para los comentarios
@@ -73,6 +73,8 @@ const ClientDashboard = () => {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return; // Asegura que se ejecute en el cliente
+
     const userId = localStorage.getItem("userId");
     if (!userId) {
       router.push("/auth/login");
@@ -201,9 +203,10 @@ const ClientDashboard = () => {
     <div className="p-8 bg-gray-100 min-h-screen text-black">
       <h1 className="text-2xl font-bold mb-6">Panel del Cliente</h1>
       <MantineText className="mb-4 text-lg font-semibold text-blue-500">
-        Bienvenido, {localStorage.getItem("userName") || "Cliente"}.
+        Bienvenido, {typeof window !== "undefined" ? localStorage.getItem("userName") || "Cliente" : "Cliente"}.
       </MantineText>
 
+      {/* Tabs y paneles */}
       <Tabs
         defaultValue="currentOrder"
         value={activeTab}

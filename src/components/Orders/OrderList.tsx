@@ -5,6 +5,7 @@ import {
   Accordion,
   Badge,
   Group,
+  Image,
   Loader,
   Select,
   Stack,
@@ -203,7 +204,7 @@ const OrderList: React.FC<OrderListProps> = ({ isAdmin }) => {
                       <Table.Td>${item.price}</Table.Td>
                       <Table.Td>{item.quantity}</Table.Td>
                       <Table.Td>
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.name}
                           style={{ width: "60px", borderRadius: "8px" }}
