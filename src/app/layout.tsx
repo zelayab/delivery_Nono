@@ -1,23 +1,20 @@
 "use client";
 
-import { MantineProvider } from "@mantine/core";
-import "@mantine/notifications/styles.css";
-
+import { MantineProvider } from '@mantine/core';
+import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// Definición de fuentes personalizadas usando next/font
 const poppins = Geist({
-  subsets: ["latin"],
   variable: "--font-poppins",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  subsets: ["latin"],
   variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export default function RootLayout({
@@ -25,9 +22,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
   return (
-    <html lang="en" className={`${poppins.variable} ${geistMono.variable}`}>
-       <head>
+    <html lang="en" >
+        <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
@@ -37,21 +36,19 @@ export default function RootLayout({
       </head>
       <body
         style={{
-          fontFamily: "var(--font-poppins)",
+          fontFamily: "Poppins, sans-serif",
           margin: 0,
           padding: 0,
           boxSizing: "border-box",
         }}
       >
-        {/* Proveedor de tema Mantine */}
         <MantineProvider
-          theme={{
-            fontFamily: "var(--font-poppins)",
-            fontFamilyMonospace: "var(--font-geist-mono)",
-          }}
-          withGlobalClasses
+         theme={{
+          fontFamily: 'Poppins, sans-serif',
+          fontFamilyMonospace: 'Poppins, sans-serif',
+        }}
+        withGlobalClasses
         >
-          {/* Notificaciones */}
           <Notifications />
           {children}
         </MantineProvider>

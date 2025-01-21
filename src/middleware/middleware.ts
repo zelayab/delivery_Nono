@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest): Promise<NextResponse> {
   const { pathname } = req.nextUrl;
   const userRole = req.cookies.get("userRole")?.value; // Obtiene el rol del usuario
   const isAuthenticated = req.cookies.has("auth"); // Verifica si está autenticado
