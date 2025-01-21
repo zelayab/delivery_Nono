@@ -45,12 +45,14 @@ const ItemManager = ({
 
   const handleDelete = (id: string) => {
     const refPath = type === "menu" ? `menu/${id}` : `promotions/${id}`;
-    remove(ref(db, refPath)).then(() =>
-      showNotification({
-        title: "Producto/Promoción eliminado",
-        message: "Producto/Promoción eliminado con éxito.",
+    remove(ref(db, refPath))
+      .then(() => {
+        showNotification({
+          title: "Producto/Promoción eliminado",
+          message: "Producto/Promoción eliminado con éxito.",
+        });
       })
-    );
+      .catch(console.error);
   };
 
   const handleToggleAvailability = (id: string, available: boolean) => {
@@ -65,12 +67,13 @@ const ItemManager = ({
     );
   };
 
-  const handleSubmit = () => {
-    let timestamp = null;
+  const [timestamp, setTimestamp] = useState<number | null>(null);
 
-    useEffect(() => {
-      timestamp = Date.now(); // Se asegura que el timestamp se genere en el cliente
-    }, []);
+  useEffect(() => {
+    setTimestamp(Date.now()); // Se asegura que el timestamp se genere en el cliente
+  }, []);
+
+  const handleSubmit = () => {
 
     const refPath = editingItem
       ? type === "menu"
@@ -142,7 +145,7 @@ const ItemManager = ({
       </div>
 
       <Button onClick={() => setIsModalOpen(true)} className="mb-4">
-        Crear Nuevo {type === "menu" ? "Producto" : "Promoción"}
+        Crear  {type === "menu" ? "Nuevo Producto" : " Nueva Promoción"}
       </Button>
 
       {/* Mostrar mensaje si no hay resultados */}
