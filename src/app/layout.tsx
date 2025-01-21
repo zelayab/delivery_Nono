@@ -1,7 +1,11 @@
 "use client";
 
 import { MantineProvider } from "@mantine/core";
+import "@mantine/notifications/styles.css";
+
 import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -23,6 +27,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${poppins.variable} ${geistMono.variable}`}>
+       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         style={{
           fontFamily: "var(--font-poppins)",

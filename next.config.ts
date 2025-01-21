@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true, // Ignorar ESLint en compilación
   },
+  experimental: {
+    forceSwcTransforms: true,
+  },
     /* this async rewrites() is added to the Next.js configuration to rewrite the routes */
   async rewrites() {
     return [

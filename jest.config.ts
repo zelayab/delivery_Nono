@@ -8,7 +8,10 @@ const config: Config = {
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.tsx"],
   transform: {
-    "^.+\\.(ts|tsx|js|jsx)$": "babel-jest",
+   "^.+\\.(js|jsx|ts|tsx)$": [
+      "babel-jest",
+      { configFile: "./.babelrc.test.js" },
+    ],
   },
   transformIgnorePatterns: ["/node_modules/(?!(modulo-especial|otro-modulo)/)"],
   testPathIgnorePatterns: ["/node_modules/", "/.next/"],
