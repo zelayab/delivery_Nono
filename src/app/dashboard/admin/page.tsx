@@ -13,9 +13,8 @@ import {
   Tabs,
   Text,
 } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import { IconBox, IconEdit, IconManFilled, IconShoppingCart, IconTag, IconTruck } from "@tabler/icons-react";
-import { onValue, ref, remove, set, update } from "firebase/database";
+import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 
 const AdminDashboard = () => {
@@ -81,7 +80,7 @@ const AdminDashboard = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string, type: string) => {
+ /*  const handleDelete = (id: string, type: string) => {
     const refPath = type === "menu" ? `menu/${id}` : `promotions/${id}`;
     remove(ref(db, refPath)).then(() => 
       showNotification({
@@ -140,7 +139,7 @@ const AdminDashboard = () => {
     }
   };
   
-
+ */
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Panel de Administración</h1>
@@ -213,7 +212,9 @@ const AdminDashboard = () => {
           <ItemManager items={menuItems} type="menu" />
 
           <h2 className="text-lg font-bold mt-6 py-5 px-10">Promociones</h2>
-          <ItemManager items={promotions} type="promotions" />
+          <ItemManager items={promotions} type="promotions"
+
+          />
         </Tabs.Panel>
       </Tabs>
       

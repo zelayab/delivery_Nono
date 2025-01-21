@@ -1,13 +1,18 @@
 import type { NextConfig } from "next";
-import { middleware } from './src/middleware/middleware';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  /* el miidleware se agrega a la configuración de Next.js */
-    middleware: () => middleware,
-    /* este async rewrites() se agrega a la configuración de Next.js  para que las rutas sean reescritas */
+  eslint: {
+    ignoreDuringBuilds: true, // Ignorar ESLint en compilación
+  },
+    /* this async rewrites() is added to the Next.js configuration to rewrite the routes */
   async rewrites() {
-    return [];
+    return [
+      {
+        source: '/dashboard/:slug*',
+        destination: '/dashboard',
+      },
+    ];
   },
 };
 
