@@ -1,6 +1,7 @@
 "use client";
 
 import { db } from "@/firebase/firebaseConfig";
+import { Coupon, MenuItem } from "@/types";
 import {
   Badge,
   Button,
@@ -19,7 +20,10 @@ import { onValue, ref, remove, update } from "firebase/database";
 import { useEffect, useState } from "react";
 
 interface MenuListProps {
-  onSelect?: (item: any, quantity: number) => void;
+  onSelect?: (item: 
+    | MenuItem
+    | Coupon, 
+    quantity: number) => void;
   showAddButton: boolean;
   isAdmin: boolean;
 }
@@ -207,6 +211,9 @@ const MenuList: React.FC<MenuListProps> = ({
                         borderRadius: "8px",
                         filter: item.available ? "" : "grayscale(1)",
                       }}
+                      h={150}
+                      
+                      
                     />
                     <Badge
                       color={item.available ? "green" : "red"}

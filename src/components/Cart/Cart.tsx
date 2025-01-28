@@ -1,6 +1,7 @@
 "use client";
 
 import { db } from "@/firebase/firebaseConfig";
+import { Coupon } from "@/types";
 import {
   ActionIcon,
   Button,
@@ -40,8 +41,6 @@ interface NewOrder {
   discount?: number;
   deliveryId?: string | null;
   change?: number | null;
-
-
 }
 
 interface CartProps {
@@ -52,13 +51,13 @@ interface CartProps {
   onClose: () => void;
 }
 
-const Cart: React.FC<CartProps> = ({
+export default function Cart({
   cart,
   onRemove,
   onUpdate,
   isOpen,
   onClose,
-}) => {
+}: CartProps) {
   const [couponCode, setCouponCode] = useState<string>("");
   const [discountPercentage, setDiscountPercentage] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<string>("efectivo");
@@ -87,7 +86,10 @@ const Cart: React.FC<CartProps> = ({
 
     onValue(
       couponRef,
-      (snapshot: any) => {
+      (snapshot: 
+        | { val: () => any }
+        | { val: () => Coupon }
+      ) => {
         const data = snapshot.val();
         console.log("Coupon data:", data);
 
@@ -124,11 +126,11 @@ const Cart: React.FC<CartProps> = ({
     );
   };
 
-    // Aseguramos que el timestamp solo se genere en el cliente
+  // Aseguramos que el timestamp solo se genere en el cliente
   let currentTimestamp: number | null = null;
-    useEffect(() => {
-      currentTimestamp = Date.now(); // Timestamp generado solo en el cliente
-    }, []);
+  useEffect(() => {
+    currentTimestamp = Date.now(); // Timestamp generado solo en el cliente
+  }, []);
 
   const handleConfirmOrder = async () => {
     const userId = localStorage.getItem("userId");
@@ -141,8 +143,6 @@ const Cart: React.FC<CartProps> = ({
       });
       return;
     }
-  
-    
   
     const newOrder: NewOrder = {
       userId,
@@ -188,7 +188,6 @@ const Cart: React.FC<CartProps> = ({
     }
   };
   
-
   const postComments = (comments: string) => {
     if (comments.length > 100) {
       showNotification({
@@ -201,8 +200,6 @@ const Cart: React.FC<CartProps> = ({
     }
     setComments(comments);
   }
-
-  
 
   return (
     <Drawer
@@ -289,7 +286,6 @@ const Cart: React.FC<CartProps> = ({
             </Button>
           </Stack>
 
-          
           <Stack mt="lg">
             <Text fw={700}>Método de Pago</Text>
             <SegmentedControl
@@ -334,6 +330,4 @@ const Cart: React.FC<CartProps> = ({
       )}
     </Drawer>
   );
-};
-
-export default Cart;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { db } from "@/firebase/firebaseConfig";
+import { Coupon, MenuItem } from "@/types";
 import {
   Button,
   Image,
@@ -20,10 +21,12 @@ const ItemManager = ({
   items,
   type,
 }: {
-  items: any[];
+  items: MenuItem[] | Coupon[];
   type: "menu" | "promotions";
 }) => {
-  const [editingItem, setEditingItem] = useState<any | null>(null);
+  const [editingItem, setEditingItem] = useState<
+    MenuItem | Coupon | null
+  >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<any>({
     name: "",
@@ -37,7 +40,7 @@ const ItemManager = ({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: MenuItem | Coupon) => {
     setEditingItem(item);
     setFormData(item);
     setIsModalOpen(true);
@@ -155,7 +158,7 @@ const ItemManager = ({
         </Text>
       ) : (
         <ul>
-          {filteredItems.map((item) => (
+          {filteredItems.map((item: MenuItem | Coupon) => (
             <li
               key={item.id}
               className="mb-4 p-4 bg-white shadow rounded flex justify-between items-center"
@@ -175,6 +178,8 @@ const ItemManager = ({
                   src={item.image}
                   alt={item.name}
                   className="w-20 h-30 object-cover rounded"
+                  width={20}
+                  height={30}
                 />
               </div>
               <div className="flex items-center gap-2">

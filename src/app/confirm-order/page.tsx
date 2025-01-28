@@ -1,14 +1,15 @@
 "use client";
 
 import { db } from "@/firebase/firebaseConfig";
+import { CartItem, Order } from "@/types";
 import { Loader } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { get, ref } from "firebase/database";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-const ConfirmOrder = () => {
-  const [order, setOrder] = useState<any>(null);
+const ConfirmOrderContent = () => {
+  const [order, setOrder] = useState<Order | null>(null);
   const searchParams = useSearchParams(); // Obtener los parámetros de la URL
   const router = useRouter();
 
@@ -72,7 +73,7 @@ const ConfirmOrder = () => {
           <h2 className="text-lg font-semibold mb-2">Resumen del Pedido</h2>
           <p><strong>Número de Orden:</strong> {order.id}</p>
           <ul className="mt-2">
-            {order.items.map((item: any) => (
+            {order.items.map((item: CartItem) => (
               <li key={item.id} className="flex justify-between border-b py-1">
                 <span>{item.name} x {item.quantity}</span>
                 <span>${(item.price * item.quantity).toFixed(2)}</span>
@@ -112,4 +113,10 @@ const ConfirmOrder = () => {
   );
 };
 
-export default ConfirmOrder;
+export default function ConfirmOrder() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <ConfirmOrderContent />
+    </Suspense>
+  );
+}

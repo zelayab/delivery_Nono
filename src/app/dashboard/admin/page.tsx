@@ -8,6 +8,7 @@ import MenuList from "@/components/menu/MenuList";
 import OrderList from "@/components/Orders/OrderList";
 import PromotionList from "@/components/Promotions/PromotionList";
 import { db } from "@/firebase/firebaseConfig";
+import { Coupon, EditingItem, MenuItem, Promotion } from "@/types";
 import {
   Loader,
   Tabs,
@@ -19,19 +20,19 @@ import { onValue, ref, remove, set, update } from "firebase/database";
 import { useEffect, useState } from "react";
 
 const AdminDashboard = () => {
-  const [menuItems, setMenuItems] = useState<any[]>([]);
-  const [promotions, setPromotions] = useState<any[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingItem, setEditingItem] = useState<any | null>(null);
+  const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<MenuItem | Promotion>({
+    id: '',
     name: "",
     price: 0,
     category: "",
     image: "",
     available: true,
     description: "",
-    items: [],
   });
 
 
@@ -45,8 +46,7 @@ const AdminDashboard = () => {
       if (data) {
         setMenuItems(
           Object.entries(data).map(([id, item]) => ({
-            id,
-            ...(item as any),
+            ...(item as MenuItem),
           }))
         );
       }
@@ -57,8 +57,7 @@ const AdminDashboard = () => {
       if (data) {
         setPromotions(
           Object.entries(data).map(([id, promo]) => ({
-            id,
-            ...(promo as any),
+            ...(promo as Promotion),
           }))
         );
       }
@@ -75,8 +74,8 @@ const AdminDashboard = () => {
     );
   }
 
-  const handleEdit = (item: any, type: string) => {
-    setEditingItem({ ...item, type });
+  const handleEdit = (item: MenuItem | Coupon, type: string) => {
+    setEditingItem({ ...item, type } as EditingItem);
     setFormData(item);
     setIsModalOpen(true);
   };
@@ -102,7 +101,7 @@ const AdminDashboard = () => {
     const refPath =
       editingItem?.type === "menu"
         ? `menu/${editingItem.id}`
-        : `promotions/${editingItem.id}`;
+        : `promotions/${editingItem?.id}`;
   
     if (editingItem) {
       update(ref(db, refPath), formData).then(() => {
@@ -182,7 +181,7 @@ const AdminDashboard = () => {
             isAdmin={true}
             showAddButton={false}
             onSelect={
-              (item: any) => handleEdit(item, "promotions")
+              (item: Coupon | MenuItem) => handleEdit(item, "promotions")
             }
           />
         </Tabs.Panel>

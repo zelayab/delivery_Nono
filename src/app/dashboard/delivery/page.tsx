@@ -1,6 +1,7 @@
 "use client";
 
 import { db } from "@/firebase/firebaseConfig";
+import { CartItem } from "@/types";
 import { Select, Tabs, Text } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconHistory, IconTruckDelivery } from "@tabler/icons-react";
@@ -132,7 +133,7 @@ const DeliveryDashboard = () => {
                     <strong>Dirección:</strong> {order.address}
                   </p>
                   <ul className="mt-2">
-                    {order.items.map((item: any) => (
+                    {order.items.map((item: CartItem) => (
                       <li key={item.id}>
                         {item.name} x {item.quantity}
                       </li>
@@ -180,7 +181,7 @@ const DeliveryDashboard = () => {
                     <strong>Dirección:</strong> {order.address}
                   </p>
                   <ul className="mt-2">
-                    {order.items.map((item: any) => (
+                    {order.items.map((item: CartItem) => (
                       <li key={item.id}>
                         {item.name} x {item.quantity}
                       </li>

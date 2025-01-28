@@ -123,7 +123,7 @@ const AdminCoupons = () => {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {coupons.map((item: any) => (
+          {coupons.map((item: Coupon) => (
             <Table.Tr key={item.id}>
               <Table.Td>{item.code}</Table.Td>
               <Table.Td>{item.discount}%</Table.Td>

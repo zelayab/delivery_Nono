@@ -4,6 +4,7 @@ import Cart from "@/components/Cart/Cart";
 import MenuList from "@/components/menu/MenuList";
 import PromotionList from "@/components/Promotions/PromotionList";
 import { db } from "@/firebase/firebaseConfig";
+import { CartItem, Coupon, MenuItem, Order, Promotion } from "@/types";
 import {
   Accordion,
   Button,
@@ -24,54 +25,78 @@ import {
   IconHistory,
   IconShoppingCart,
 } from "@tabler/icons-react";
-import { onValue, push, ref, update } from "firebase/database";
+import { DataSnapshot, onValue, push, ref, update } from "firebase/database";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+// Interfaces
+interface FirebaseUser {
+  role: string;
+  name: string;
+  email: string;
+}
+
+interface DeliveryMapState {
+  [key: string]: string;
+}
 
 const ClientDashboard = () => {
-  const [currentOrder, setCurrentOrder] = useState<any>(null);
-  const [orderHistory, setOrderHistory] = useState<any[]>([]);
-  const [deliveryMap, setDeliveryMap] = useState<Record<string, string>>({}); // UID-to-Name map
-  const [loading, setLoading] = useState<boolean>(true);
-  const [cart, setCart] = useState<any[]>([]);
-  const [promotions, setPromotions] = useState<any[]>([]);
-  const [comments, setComments] = useState<string>(""); // Estado para los comentarios
+  // Estados
+  const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
+  const [orderHistory, setOrderHistory] = useState<Order[]>([]);
+  const [deliveryMap, setDeliveryMap] = useState<DeliveryMapState>({});
+  const [loading, setLoading] = useState(true);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [comments, setComments] = useState("");
   const [activeTab, setActiveTab] = useState<string>("menu");
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  
   const router = useRouter();
 
+  // Fetch delivery users
   useEffect(() => {
-    // Fetch orders
-    const ordersRef = ref(db, "orders");
-    onValue(ordersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const formattedOrders = Object.entries(data).map(
-          ([id, order]) => ({ id, ...(order as any) })
-        );
-        setOrderHistory(formattedOrders);
-      } else {
-        setOrderHistory([]);
-      }
-    });
+    try {
+      const usersRef = ref(db, "users");
+      const unsubscribe = onValue(usersRef, (snapshot: DataSnapshot) => {
+        try {
+          const data = snapshot.val();
+          if (data) {
+            const deliveryUsers = Object.entries(data)
+              .filter(([_, user]: [string, any]) => 
+                user && 
+                typeof user === 'object' && 
+                'role' in user && 
+                user.role === 'delivery'
+              )
+              .reduce<DeliveryMapState>((acc, [id, user]  ) => {
+                if (user && typeof user === 'object' && 'name' in user && typeof user.name === 'string') {
+                  acc[id] = user.name;
+                }
+                return acc;
+              }, {});
+            setDeliveryMap(deliveryUsers);
+          }
+        } catch (error) {
+          console.error('Error procesando datos de usuarios:', error);
+          showNotification({
+            title: 'Error',
+            message: 'Error al cargar datos de repartidores',
+            color: 'red',
+          });
+        } finally {
+          setLoading(false);
+        }
+      });
 
-    // Fetch delivery users
-    const usersRef = ref(db, "users");
-    onValue(usersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const deliveryUsers = Object.entries(data)
-          .filter(([_, user]: [string, any]) => user.role === "delivery") // Filter delivery users
-          .reduce((acc, [id, user]: [string, any]) => {
-            acc[id] = user.name; // Map UID to name
-            return acc;
-          }, {} as Record<string, string>);
-        setDeliveryMap(deliveryUsers);
-      }
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('Error en la suscripción de usuarios:', error);
       setLoading(false);
-    });
+    }
   }, []);
 
+  // Fetch user orders
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
@@ -79,90 +104,119 @@ const ClientDashboard = () => {
       return;
     }
 
-    const ordersRef = ref(db, "orders");
+    try {
+      const ordersRef = ref(db, "orders");
+      const unsubscribe = onValue(ordersRef, (snapshot: DataSnapshot) => {
+        try {
+          const data = snapshot.val();
+          if (data && typeof data === "object") {
+            const userOrders = Object.entries(data)
+              .map(([id, order]) => ({ ...(order as Order) }))
+              .filter((order) => order.userId === userId);
 
-    onValue(ordersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data && typeof data === "object") {
-        const userOrders = Object.entries(data)
-          .map(([id, order]) => ({ id, ...(order as any) }))
-          .filter((order) => order.userId === userId);
+            const activeOrder = userOrders.find(
+              (order) => order.status === "pendiente"
+            );
+            const pastOrders = userOrders.filter(
+              (order) => order.status !== "pendiente"
+            );
 
-        const activeOrder = userOrders.find(
-          (order) => order.status === "pendiente"
-        );
-        const pastOrders = userOrders.filter(
-          (order) => order.status !== "pendiente"
-        );
+            setCurrentOrder(activeOrder || null);
+            setOrderHistory(pastOrders);
+          }
+        } catch (error) {
+          console.error('Error procesando órdenes:', error);
+          showNotification({
+            title: 'Error',
+            message: 'Error al cargar las órdenes',
+            color: 'red',
+          });
+        }
+      });
 
-        setCurrentOrder(activeOrder || null);
-        setOrderHistory(pastOrders || []);
-      }
-    });
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('Error en la suscripción de órdenes:', error);
+    }
   }, [router]);
 
+  // Fetch promotions
   useEffect(() => {
-    const promotionsRef = ref(db, "promotions");
-    onValue(promotionsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data && typeof data === "object") {
-        const promotionsArray = Object.entries(data).map(([id, promo]) => ({
-          id,
-          ...(promo as any),
-        }));
-        setPromotions(promotionsArray);
-      } else {
-        setPromotions([]);
-      }
-    });
+    try {
+      const promotionsRef = ref(db, "promotions");
+      const unsubscribe = onValue(promotionsRef, (snapshot: DataSnapshot) => {
+        try {
+          const data = snapshot.val();
+          if (data && typeof data === "object") {
+            const promotionsArray = Object.entries(data).map(([id, promo]) => ({
+              ...(promo as Promotion),
+            }));
+            setPromotions(promotionsArray);
+          } else {
+            setPromotions([]);
+          }
+        } catch (error) {
+          console.error('Error procesando promociones:', error);
+          showNotification({
+            title: 'Error',
+            message: 'Error al cargar las promociones',
+            color: 'red',
+          });
+        }
+      });
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('Error en la suscripción de promociones:', error);
+    }
   }, []);
 
-  const addToCart = (item: any, quantity: number) => {
-    const existingItem = cart.find((cartItem) => cartItem.id === item.id);
-    if (existingItem) {
-      setCart((prev) =>
-        prev.map((cartItem) =>
+  // Handlers
+  const addToCart = useCallback((item: MenuItem | Coupon, quantity: number) => {
+    setCart((prev) => {
+      const existingItem = prev.find((cartItem) => cartItem.id === item.id);
+      if (existingItem) {
+        return prev.map((cartItem) =>
           cartItem.id === item.id
             ? { ...cartItem, quantity: cartItem.quantity + quantity }
             : cartItem
-        )
-      );
-    } else {
-      setCart((prev) => [...prev, { ...item, quantity }]);
-    }
+        );
+      }
+      return [...prev, { ...item, quantity }];
+    });
     setIsCartOpen(true);
-  };
+  }, []);
 
-  const removeFromCart = (id: string) => {
+  const removeFromCart = useCallback((id: string) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
-  };
+  }, []);
 
-  const updateCartItem = (id: string, quantity: number) => {
+  const updateCartItem = useCallback((id: string, quantity: number) => {
     setCart((prev) =>
       prev.map((item) => (item.id === id ? { ...item, quantity } : item))
     );
-  };
+  }, []);
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = useCallback((value: string) => {
     setActiveTab(value);
     if (value === "cart") {
       setIsCartOpen(true);
     }
-  };
+  }, []);
 
-  const handleCartClose = () => {
+  const handleCartClose = useCallback(() => {
     setIsCartOpen(false);
     setActiveTab("menu");
-  };
+  }, []);
 
-  const handleCancelOrder = async (orderId: string) => {
+  const handleCancelOrder = useCallback(async (orderId: string) => {
     try {
       const orderRef = ref(db, `orders/${orderId}`);
       await update(orderRef, { status: "cancelado" });
       showNotification({
         title: "Pedido Cancelado",
         message: "Pedido cancelado correctamente.",
-        color: "red",
+        color: "green",
       });
       setCurrentOrder(null);
     } catch (error) {
@@ -173,33 +227,56 @@ const ClientDashboard = () => {
         color: "red",
       });
     }
-  };
+  }, []);
 
-  const handleConfirmOrder = async () => {
+  const handleConfirmOrder = useCallback(async () => {
     const userId = localStorage.getItem("userId");
+    if (!userId) {
+      showNotification({
+        title: "Error",
+        message: "Usuario no identificado",
+        color: "red",
+      });
+      return;
+    }
+
     const newOrder = {
       userId,
       items: cart,
       comments,
       status: "pendiente",
       total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      createdAt: new Date().toISOString(),
     };
 
     try {
       await push(ref(db, "orders"), newOrder);
-      alert("Pedido confirmado con éxito.");
+      showNotification({
+        title: "Éxito",
+        message: "Pedido confirmado correctamente",
+        color: "green",
+      });
       setCart([]);
       setComments("");
       setActiveTab("currentOrder");
     } catch (error) {
       console.error("Error al confirmar el pedido:", error);
-      alert("Hubo un problema al confirmar el pedido.");
+      showNotification({
+        title: "Error",
+        message: "Hubo un problema al confirmar el pedido",
+        color: "red",
+      });
     }
-  };
+  }, [cart, comments]);
+
+  // Render
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen text-black">
-      <h1 className="text-2xl font-bold mb-6">Panel del Cliente</h1>
+         <h1 className="text-2xl font-bold mb-6">Panel del Cliente</h1>
       <MantineText className="mb-4 text-lg font-semibold text-blue-500">
         Bienvenido, {localStorage.getItem("userName") || "Cliente"}.
       </MantineText>

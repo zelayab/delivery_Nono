@@ -77,8 +77,8 @@ const LoginPage = () => {
 
         router.push(`/dashboard`);
       }
-    } catch (err: any) {
-      console.error("Error al iniciar sesión con Google:", err.message || err);
+    } catch (err: unknown) {
+      console.error("Error al iniciar sesión con Google:", err instanceof Error ? err.message : err);
       showNotification({
         title: "Error",
         message: "Ocurrió un error al iniciar sesión con Google. Por favor, intenta nuevamente.",

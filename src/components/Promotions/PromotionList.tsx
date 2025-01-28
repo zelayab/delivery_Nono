@@ -1,18 +1,5 @@
+import { Promotion } from '@/types';
 import { Button, Card, Grid, Image, Text } from "@mantine/core";
-
-
-interface Promotion {
-  id: string;
-  name: string;
-  description: string;
-  items?: string[];
-  price?: number;
-  minAmount?: number;
-  percentage?: number;
-  available: boolean;
-  image?: string;
-}
-
 
 
 interface PromotionListProps {

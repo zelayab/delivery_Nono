@@ -3,6 +3,7 @@
 import AppLayout from "@/components/Navbar/Navbar";
 import { Loader, Text } from "@mantine/core";
 import { motion } from "motion/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AdminDashboard from "./admin/page";
@@ -52,7 +53,7 @@ const Dashboard = () => {
             ease: "easeInOut", // Suavizado
           }}
         >
-          <img
+          <Image
             src="https://static.vecteezy.com/system/resources/previews/019/796/973/non_2x/motorbike-delivery-man-logo-icon-symbol-template-free-vector.jpg"
             alt="Delivery Nono"
             className="w-36 h-36 object-cover rounded-full"

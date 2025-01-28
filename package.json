@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:no-lint": "next build --no-lint",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --config jest.config.ts"
+    "test": "jest --config jest.config.ts",
+    "test:watch": "jest --config jest.config.ts --watch"
   },
   "dependencies": {
     "@mantine/charts": "^7.16.0",
@@ -39,9 +41,9 @@
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.0",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/node": "^20.17.16",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
     "babel-jest": "^29.7.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.4",

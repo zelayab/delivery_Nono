@@ -34,7 +34,7 @@ const UserProfile = () => {
       try {
         const userRef = ref(db, `users/${userId}`);
         const snapshot = await get(userRef);
-        
+
         if (snapshot.exists()) {
           const data = snapshot.val();
           setName(data.name || "");
@@ -70,7 +70,12 @@ const UserProfile = () => {
 
     try {
       // Actualizar información del perfil
-      const updateData: any = { name };
+      const updateData: {
+        name: string;
+        address?: string;
+        phone?: string;
+      } = { name: name };
+
       if (role === "client") {
         updateData.address = address;
         updateData.phone = phone;
@@ -85,7 +90,9 @@ const UserProfile = () => {
       });
       router.push("/dashboard");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al guardar el perfil.");
+      setError(
+        err instanceof Error ? err.message : "Error al guardar el perfil."
+      );
     }
   };
 
@@ -100,10 +107,12 @@ const UserProfile = () => {
   if (error) {
     return (
       <div style={{ maxWidth: "400px", margin: "auto", padding: "20px" }}>
-        <Text style={{ color: "red", marginBottom: "20px" }}>
-          {error}
-        </Text>
-        <Button onClick={() => router.push("/dashboard/client")} fullWidth color="gray">
+        <Text style={{ color: "red", marginBottom: "20px" }}>{error}</Text>
+        <Button
+          onClick={() => router.push("/dashboard/client")}
+          fullWidth
+          color="gray"
+        >
           Volver al Panel
         </Button>
       </div>

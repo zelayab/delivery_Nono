@@ -91,8 +91,8 @@ jest.mock("firebase/database", () => ({
 //**
 //  * Mock de `@mantine/notifications` para pruebas de notificaciones en componentes Mantine.
 //  */
-jest.mock("@mantine/notifications", () => ({
-  showNotification: jest.fn(), // Simula la llamada al método para mostrar notificaciones.
+jest.mock('@mantine/notifications', () => ({
+  showNotification: jest.fn(),
 }));
 
 //**

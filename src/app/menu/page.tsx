@@ -3,19 +3,20 @@
 import Cart from "@/components/Cart/Cart";
 import MenuList from "@/components/menu/MenuList";
 import PromotionList from "@/components/Promotions/PromotionList";
+import { CartItem, Coupon, MenuItem, Promotion } from "@/types";
 import { useState } from "react";
 
 const MenuPage = () => {
-  const [cart, setCart] = useState<any[]>([]);
-  const [promotions] = useState<any[]>([
-    { id: "promo1", name: "Combo Familiar", price: 500 },
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [promotions] = useState<Promotion[]>([
+    { id: "promo1", name: "Combo Familiar", price: 500, category: "combo", image: "", available: true, description: "" },
   ]);
-  const [menu] = useState<any[]>([
-    { id: "item1", name: "Pizza", price: 700 },
+  const [menu] = useState<MenuItem[]>([
+    { id: "item1", name: "Pizza", price: 700, category: "pizza", image: "", available: true, description: "" },
   ]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const addToCart = (item: any) => {
+  const addToCart = (item: MenuItem | Coupon) => {
     const existingItem = cart.find((cartItem) => cartItem.id === item.id);
     if (existingItem) {
       setCart((prev) =>

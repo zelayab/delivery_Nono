@@ -8,7 +8,10 @@ interface MenuItemProps {
   price: number;
   available: boolean;
   category: string;
-  onUpdate: (id: string, updates: any) => void;
+  onUpdate: (id: string, updates: 
+    | { available: boolean }
+    | { available: boolean, price: number }
+  ) => void;
   onDelete: (id: string) => void;
 }
 
