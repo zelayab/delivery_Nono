@@ -178,8 +178,6 @@ const MenuList: React.FC<MenuListProps> = ({
       <Grid gutter="lg" p={"1rem"}>
         {menu.map(
           (item) => (
-            console.log(item),
-            (
               <Grid.Col span={4} key={item.id}>
                 <Card
                   shadow="sm"
@@ -288,7 +286,7 @@ const MenuList: React.FC<MenuListProps> = ({
               </Grid.Col>
             )
           )
-        )}
+        }
       </Grid>
     </>
   );

@@ -18,7 +18,7 @@ import { onValue, ref, remove, update } from "firebase/database";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface Coupon {
+export interface Coupon {
   id: string;
   code: string;
   discount: number;
@@ -54,12 +54,18 @@ const AdminCoupons = () => {
         const formattedCoupons = Object.entries(data)
           .map(([id, coupon]) => {
             if (typeof coupon === "object" && coupon !== null) {
-              return { ...(coupon as Coupon) };
+              // Aquí agregamos el id explícitamente
+              return { 
+                id, // Usar el key de Firebase como id
+                ...(coupon as Omit<Coupon, 'id'>)
+              };
             }
             return null;
           })
           .filter(Boolean) as Coupon[];
         setCoupons(formattedCoupons);
+      } else {
+        setCoupons([]); // Si no hay datos, inicializar como array vacío
       }
     });
 
@@ -124,7 +130,7 @@ const AdminCoupons = () => {
         </Table.Thead>
         <Table.Tbody>
           {coupons.map((item: any) => (
-            <Table.Tr key={item.id}>
+            <Table.Tr key={item.code}>
               <Table.Td>{item.code}</Table.Td>
               <Table.Td>{item.discount}%</Table.Td>
               <Table.Td>{item.description}</Table.Td>
@@ -135,7 +141,7 @@ const AdminCoupons = () => {
                 <Group>
                   <ActionIcon
                     color="red"
-                    onClick={() => handleDeleteCoupon(item.id)}
+                    onClick={() => handleDeleteCoupon(item.code)}
                   >
                     <IconTrash />
                   </ActionIcon>
