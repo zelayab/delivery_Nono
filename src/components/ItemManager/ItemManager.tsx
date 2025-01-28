@@ -108,13 +108,15 @@ const ItemManager = ({
 
   // Filtro de búsqueda y categoría
   const filteredItems = items.filter((item) => {
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter
-      ? item.category === categoryFilter
-      : true;
-    return matchesSearch && matchesCategory;
+    const matchesSearch = item?.name 
+    ? item.name.toLowerCase().includes(searchTerm?.toLowerCase() || '')
+    : false;
+
+  const matchesCategory = categoryFilter 
+    ? item?.category?.toLowerCase() === categoryFilter?.toLowerCase()
+    : true;
+
+  return matchesSearch && matchesCategory;
   });
 
   return (
@@ -157,7 +159,7 @@ const ItemManager = ({
           No se encontraron resultados para tu búsqueda.
         </Text>
       ) : (
-        <ul>
+        <ul className="flex flex-col gap-4" key={filteredItems.length}>
           {filteredItems.map((item: MenuItem | Coupon) => (
             <li
               key={item.id}

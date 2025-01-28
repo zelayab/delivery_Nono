@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: [
+      'static.vecteezy.com',
       'firebasestorage.googleapis.com',
     ], // Ajusta según tu dominio
     unoptimized: process.env.NODE_ENV === 'development'
