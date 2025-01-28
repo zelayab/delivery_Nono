@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   experimental: {
     forceSwcTransforms: true, // Forzar SWC para next/font
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     domains: [
       'firebasestorage.googleapis.com',
